@@ -1,6 +1,5 @@
 
 public class TennisGame1 implements TennisGame {
-    
     private int player1Score = 0;
     private int player2Score = 0;
     private String player1Name;
@@ -21,60 +20,72 @@ public class TennisGame1 implements TennisGame {
 
     public String getScore() {
         StringBuilder score = new StringBuilder();
-        int tempScore = 0;
+
         if (player1Score == player2Score) {
-            switch (player1Score) {
+            appendScoreForDrawingScenario(score);
+        } else if (player1Score >= 4 || player2Score >= 4) {
+            appendScoreForAdvantageScenario(score);
+        } else {
+            appendScore(score);
+        }
+
+        return score.toString();
+    }
+
+    private void appendScore(StringBuilder score) {
+        int tempScore;
+        for (int i = 1; i < 3; i++) {
+            if (i == 1) {
+                tempScore = player1Score;
+            } else {
+                score.append("-");
+                tempScore = player2Score;
+            }
+
+            switch (tempScore) {
                 case 0:
-                        score.append("Love-All");
+                    score.append("Love");
                     break;
                 case 1:
-                    score.append("Fifteen-All");
+                    score.append("Fifteen");
                     break;
                 case 2:
-                    score.append("Thirty-All");
+                    score.append("Thirty");
                     break;
-                default:
-                    score.append("Deuce");
+                case 3:
+                    score.append("Forty");
                     break;
-                
-            }
-        } else if (player1Score >= 4 || player2Score >= 4) {
-            int minusResult = player1Score - player2Score;
-            if (minusResult == 1) {
-                score.append("Advantage player1");
-            } else if (minusResult == -1) {
-                score.append("Advantage player2");
-            } else if (minusResult >= 2) {
-                score.append("Win for player1");
-            } else {
-                score.append("Win for player2");
-            }
-        } else {
-            for (int i = 1; i < 3; i++) {
-                if (i == 1) {
-                    tempScore = player1Score;
-                } else {
-                    score.append("-");
-                    tempScore = player2Score;
-                }
-
-                switch(tempScore)
-                {
-                    case 0:
-                        score.append("Love");
-                        break;
-                    case 1:
-                        score.append("Fifteen");
-                        break;
-                    case 2:
-                        score.append("Thirty");
-                        break;
-                    case 3:
-                        score.append("Forty");
-                        break;
-                }
             }
         }
-        return score.toString();
+    }
+
+    private void appendScoreForAdvantageScenario(StringBuilder score) {
+        int minusResult = player1Score - player2Score;
+        if (minusResult == 1) {
+            score.append("Advantage player1");
+        } else if (minusResult == -1) {
+            score.append("Advantage player2");
+        } else if (minusResult >= 2) {
+            score.append("Win for player1");
+        } else {
+            score.append("Win for player2");
+        }
+    }
+
+    private void appendScoreForDrawingScenario(StringBuilder score) {
+        switch (player1Score) {
+            case 0:
+                score.append("Love-All");
+                break;
+            case 1:
+                score.append("Fifteen-All");
+                break;
+            case 2:
+                score.append("Thirty-All");
+                break;
+            default:
+                score.append("Deuce");
+                break;
+        }
     }
 }
