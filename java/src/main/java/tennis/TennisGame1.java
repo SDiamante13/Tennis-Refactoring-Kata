@@ -35,7 +35,7 @@ public class TennisGame1 implements TennisGame {
                     score.append("Thirty-All");
                     break;
                 default:
-                    score.append("tennis.Deuce");
+                    score.append("Deuce");
                     break;
 
             }
