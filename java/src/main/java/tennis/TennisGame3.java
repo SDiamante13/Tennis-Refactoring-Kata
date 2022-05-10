@@ -1,3 +1,4 @@
+package tennis;
 
 public class TennisGame3 implements TennisGame {
     
@@ -19,7 +20,7 @@ public class TennisGame3 implements TennisGame {
             return (p1 == p2) ? s + "-All" : s + "-" + p[p2];
         } else {
             if (p1 == p2)
-                return "Deuce";
+                return "tennis.Deuce";
             s = p1 > p2 ? p1N : p2N;
             return ((p1-p2)*(p1-p2) == 1) ? "Advantage " + s : "Win for " + s;
         }

@@ -1,3 +1,4 @@
+package tennis;
 
 public class TennisGame2 implements TennisGame
 {
@@ -27,7 +28,7 @@ public class TennisGame2 implements TennisGame
             score += "-All";
         }
         if (P1point==P2point && P1point>=3)
-            score = "Deuce";
+            score = "tennis.Deuce";
         
         if (P1point > 0 && P2point==0)
         {
