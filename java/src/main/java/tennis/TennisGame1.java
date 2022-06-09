@@ -1,9 +1,27 @@
 package tennis;
 
 public class TennisGame1 implements TennisGame {
+    private static final int ZERO_POINTS = 0;
+    private static final int ONE_POINT = 1;
+    private static final int TWO_POINTS = 2;
+    private static final int THREE_POINTS = 3;
+    private static final int ADVANTAGE_THRESHOLD = 4;
 
-    private int m_score1 = 0;
-    private int m_score2 = 0;
+    // It passes all the tests
+    // It minimizes duplication in all its forms
+    // It expresses its intent clearly to the reader
+    // It removes unnecessary elements
+
+    // Step 0: Identify Code smells - Long method, Heavy Indentation, Temporary Field
+    // Step 1: Rename methods, fields, and variables to understand the domain better.
+    // Step 2: Extract methods to paint a clear picture of what the code is doing.
+    // Step 3: Remove temporary variables. Return fields early.
+    // Step 4: Substitute Algorithm for Advantage method
+    // Step 5: Substitute Algorithm for ScoreBothPlayers method
+    // Step 6: Eliminate Primitive Obsession by introduction a Value Object called Player to hold the score of the player.
+    
+    private int playerOneScore = ZERO_POINTS;
+    private int playerTwoScore = ZERO_POINTS;
     private String player1Name;
     private String player2Name;
 
@@ -13,65 +31,79 @@ public class TennisGame1 implements TennisGame {
     }
 
     public void wonPoint(String playerName) {
+        // replace with ternary?
         if (playerName == "player1")
-            m_score1 += 1;
+            playerOneScore += ONE_POINT;
         else
-            m_score2 += 1;
+            playerTwoScore += ONE_POINT;
     }
 
     public String getScore() {
-        String score = "";
-        int tempScore=0;
-        if (m_score1==m_score2)
-        {
-            switch (m_score1)
-            {
-                case 0:
-                    score = "Love-All";
-                    break;
-                case 1:
-                    score = "Fifteen-All";
-                    break;
-                case 2:
-                    score = "Thirty-All";
-                    break;
-                default:
-                    score = "Deuce";
-                    break;
+        if (playerOneScore == playerTwoScore) {
+            return tiedScore();
+        }
+        boolean playersAreInAdvantagePlay = playerOneScore >= ADVANTAGE_THRESHOLD || playerTwoScore >= ADVANTAGE_THRESHOLD;
+        if (playersAreInAdvantagePlay) {
+            return scoreForAdvantagePlay();
+        } else {
+            return scoreForBothPlayers();
+        }
+    }
 
-            }
+
+    private String scoreForBothPlayers() {
+        return String.format("%s-%s", translate(playerOneScore), translate(playerTwoScore));
+    }
+
+    private String translate(int score) {
+        // make an enum called Score (ZERO, ONE, TWO, THREE, ) with mappings to String values
+        switch (score) {
+            case ONE_POINT:
+                return "Fifteen";
+            case TWO_POINTS:
+                return "Thirty";
+            case THREE_POINTS:
+                return "Forty";
+            default:
+                return "Love";
         }
-        else if (m_score1>=4 || m_score2>=4)
-        {
-            int minusResult = m_score1-m_score2;
-            if (minusResult==1) score ="Advantage player1";
-            else if (minusResult ==-1) score ="Advantage player2";
-            else if (minusResult>=2) score = "Win for player1";
-            else score ="Win for player2";
+    }
+
+    private String scoreForAdvantagePlay() {
+        if (playerOneIsAheadByOnePoint()) { // this could be  Enum called ScoringState {ADVANTAGE_PLAYER_ONE, ADVANTAGE_PLAYER_TWO, PLAYER_ONE_WIN, PLAYER_TWO_WIN}
+            return "Advantage player1";
         }
-        else
-        {
-            for (int i=1; i<3; i++)
-            {
-                if (i==1) tempScore = m_score1;
-                else { score+="-"; tempScore = m_score2;}
-                switch(tempScore)
-                {
-                    case 0:
-                        score+="Love";
-                        break;
-                    case 1:
-                        score+="Fifteen";
-                        break;
-                    case 2:
-                        score+="Thirty";
-                        break;
-                    case 3:
-                        score+="Forty";
-                        break;
-                }
-            }
+        if (playerTwoIsAheadByOnePoint()) {
+            return "Advantage player2";
         }
-        return score;
+        if (playerOneHasWon()) {
+            return "Win for player1";
+        }
+        return "Win for player2";
+    }
+
+    private boolean playerOneHasWon() {
+        return playerOneScore - playerTwoScore >= TWO_POINTS;
+    }
+
+    private boolean playerTwoIsAheadByOnePoint() {
+        return playerTwoScore - playerOneScore == ONE_POINT;
+    }
+
+    private boolean playerOneIsAheadByOnePoint() {
+        return playerOneScore - playerTwoScore == ONE_POINT;
+    }
+
+    private String tiedScore() {
+        switch (playerOneScore) {
+            case ZERO_POINTS:
+                return "Love-All";
+            case ONE_POINT:
+                return "Fifteen-All";
+            case TWO_POINTS:
+                return "Thirty-All";
+            default:
+                return "Deuce";
+        }
     }
 }
