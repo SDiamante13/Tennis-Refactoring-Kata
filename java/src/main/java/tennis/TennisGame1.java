@@ -2,9 +2,8 @@ package tennis;
 
 public class TennisGame1 implements TennisGame {
 
-    // TODO: introduce Score object
-    private int player1Score = 0;
-    private int player2Score = 0;
+    private int m_score1 = 0;
+    private int m_score2 = 0;
     private String player1Name;
     private String player2Name;
 
@@ -14,86 +13,65 @@ public class TennisGame1 implements TennisGame {
     }
 
     public void wonPoint(String playerName) {
-        if (playerName.equals(player1Name)) {
-            player1Score++;
-        } else {
-            player2Score++;
-        }
+        if (playerName == "player1")
+            m_score1 += 1;
+        else
+            m_score2 += 1;
     }
-
-    private String translateTiedScore(int playerScore) {
-        switch (playerScore) {
-            case 0:
-                return "Love-All";
-            case 1:
-                return "Fifteen-All";
-            case 2:
-                return "Thirty-All";
-            default:
-                return "Deuce";
-        }
-    }
-
 
     public String getScore() {
-        StringBuilder score = new StringBuilder();
-        if (scoresAreEqual(player1Score, player2Score)) {
-            String tiedScore = translateTiedScore(player1Score);
-            return score.append(tiedScore)
-                    .toString();
-        } else if (isPlayerCrushingIt()) {
-            int minusResult = player1Score - player2Score;
-            translateWinningScore(score, minusResult);
-        } else {
-            //  player1Score.translate() + "-" + player2Score.translate();
-            //  Use a HashMap (0 -> Love, 1-> Fifteen, 2-> Thirty, 3-> Forty)
-            for (int i = 1; i < 3; i++) {
-                int tempScore;
+        String score = "";
+        int tempScore=0;
+        if (m_score1==m_score2)
+        {
+            switch (m_score1)
+            {
+                case 0:
+                    score = "Love-All";
+                    break;
+                case 1:
+                    score = "Fifteen-All";
+                    break;
+                case 2:
+                    score = "Thirty-All";
+                    break;
+                default:
+                    score = "Deuce";
+                    break;
 
-                if (i == 1) {
-                    tempScore = player1Score;
-                } else {
-                    score.append("-");
-                    tempScore = player2Score;
-                }
-
-                switch (tempScore) {
+            }
+        }
+        else if (m_score1>=4 || m_score2>=4)
+        {
+            int minusResult = m_score1-m_score2;
+            if (minusResult==1) score ="Advantage player1";
+            else if (minusResult ==-1) score ="Advantage player2";
+            else if (minusResult>=2) score = "Win for player1";
+            else score ="Win for player2";
+        }
+        else
+        {
+            for (int i=1; i<3; i++)
+            {
+                if (i==1) tempScore = m_score1;
+                else { score+="-"; tempScore = m_score2;}
+                switch(tempScore)
+                {
                     case 0:
-                        score.append("Love");
+                        score+="Love";
                         break;
                     case 1:
-                        score.append("Fifteen");
+                        score+="Fifteen";
                         break;
                     case 2:
-                        score.append("Thirty");
+                        score+="Thirty";
                         break;
                     case 3:
-                        score.append("Forty");
+                        score+="Forty";
                         break;
                 }
             }
         }
-        return score.toString();
-    }
-
-    private void translateWinningScore(StringBuilder score, int minusResult) {
-        if (minusResult == 1) {
-            score.append("Advantage player1");
-        } else if (minusResult == -1) {
-            score.append("Advantage player2");
-        } else if (minusResult >= 2) {
-            score.append("Win for player1");
-        } else {
-            score.append("Win for player2");
-        }
-    }
-
-    private boolean isPlayerCrushingIt() {
-        return player1Score >= 4 || player2Score >= 4;
-    }
-
-
-    private boolean scoresAreEqual(int player1Score, int player2Score) {
-        return player1Score == player2Score;
+        return score;
     }
 }
