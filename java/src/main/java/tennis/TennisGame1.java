@@ -31,27 +31,30 @@ public class TennisGame1 implements TennisGame {
     }
 
     public String getScore() {
-        if (player1.isTiedWith(player2.score())) {
-            return Points.ofTied(player1.score()).displayName();
+        int player1Score = player1.score();
+        int player2Score = player2.score();
+
+        if (player1.isTiedWith(player2Score)) {
+            return Points.ofTied(player1Score).displayName();
         }
 
-        if (player1.hasAdvantage(player2.score()) && player1.isAheadByOnePoint(player2.score())) {
+        if (player1.hasAdvantage(player2Score) && player1.isAheadByOnePoint(player2Score)) {
                 return "Advantage player1"; // can add ofAdvantage creation method to Points enum
         }
 
-        if (player1.hasAdvantage(player2.score()) && player1.hasWon(player2.score())) {
+        if (player1.hasAdvantage(player2Score) && player1.hasWon(player2Score)) {
             return "Win for player1";
         }
 
-        if (player2.hasAdvantage(player1.score()) && player2.isAheadByOnePoint(player1.score())) {
+        if (player2.hasAdvantage(player1Score) && player2.isAheadByOnePoint(player1Score)) {
                 return "Advantage player2";
         }
 
-        if (player2.hasAdvantage(player1.score()) && player2.hasWon(player1.score())) {
+        if (player2.hasAdvantage(player1Score) && player2.hasWon(player1Score)) {
             return "Win for player2";
         }
 
-        return String.format("%s-%s", translate(player1.score()), translate(player2.score()));
+        return String.format("%s-%s", translate(player1Score), translate(player2Score));
     }
 
     private String translate(int score) {
