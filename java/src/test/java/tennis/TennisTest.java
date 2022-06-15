@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TennisTest {
 
-    private final TennisGame1 game = new TennisGame1("player1", "player2");
+    private final TennisGame1 game = new TennisGame1();
 
     @ParameterizedTest(name = "playerOne: {0} playerTwo: {1} - {2}")
     @CsvSource({
