@@ -3,28 +3,35 @@ package tennis;
 // Low-Hanging Fruit (rename field, rename method, extract method, remove temp variables)
 // Unroll For Loop
 // Replace Conditional with Polymorphism
+// Split AdvantageOrWinResult up
+// Eliminate Primitive Obsession by introducing Player object
+// Eliminate Feature Envy
 
 public class TennisGame1 implements TennisGame {
 
-    private int player1Score = 0;
-    private int player2Score = 0;
+
+    private Player player1;
+    private Player player2;
     private String player1Name;
     private String player2Name;
 
     public TennisGame1(String player1Name, String player2Name) {
         this.player1Name = player1Name;
         this.player2Name = player2Name;
+        this.player1 = new Player(player1Name);
+        this.player2 = new Player(player2Name);
     }
 
     public void wonPoint(String playerName) {
-        if (playerName == "player1")
-            player1Score += 1;
-        else
-            player2Score += 1;
+        if (playerName.equals("player1")) {
+            player1.addPoint();
+        } else {
+            player2.addPoint();
+        }
     }
 
     public String getScore() {
-        return Arbiter.determineResult(player1Score, player2Score).getScoreAsText();
+        return Arbiter.determineResult(player1, player2).getScoreAsText();
     }
 }
 
@@ -61,25 +68,27 @@ class DrawResult extends Result {
     }
 }
 
-class AdvantageOrWinResult extends Result {
+class AdvantageResult extends Result {
 
-    public AdvantageOrWinResult(int player1Score, int player2Score) {
+    public AdvantageResult(int player1Score, int player2Score) {
         super(player1Score, player2Score);
     }
 
     @Override
     String getScoreAsText() {
-        int minusResult = player1Score - player2Score;
-        if (minusResult == 1) {
-            return "Advantage player1";
-        } else if (minusResult == -1) {
-            return "Advantage player2";
-        } else if (minusResult >= 2) {
-            return "Win for player1";
-        } else {
-            return "Win for player2";
-        }
+        return player1Score > player2Score ? "Advantage player1" : "Advantage player2";
+    }
+}
 
+class WinResult extends Result {
+
+    public WinResult(int player1Score, int player2Score) {
+        super(player1Score, player2Score);
+    }
+
+    @Override
+    String getScoreAsText() {
+        return player1Score > player2Score ? "Win for player1" : "Win for player2";
     }
 }
 
@@ -108,13 +117,25 @@ class OngoingResult extends Result {
 }
 
 class Arbiter {
-    public static Result determineResult(int player1Score, int player2Score) {
-        if (player1Score == player2Score) {
-            return new DrawResult(player1Score, player2Score);
-        } else if (player1Score >= 4 || player2Score >= 4) {
-            return new AdvantageOrWinResult(player1Score, player2Score);
+    public static Result determineResult(Player player1, Player player2) {
+        if (player1.isTiedWith(player2)) {
+            return new DrawResult(player1.getScore(), player2.getScore());
         } else {
-            return new OngoingResult(player1Score, player2Score);
+            if (eitherPlayerHasAdvantage(player1.getScore(), player2.getScore()) && someoneIsAheadByOnePoint(player1, player2)) {
+                return new AdvantageResult(player1.getScore(), player2.getScore());
+            } else if (eitherPlayerHasAdvantage(player1.getScore(), player2.getScore())) {
+                return new WinResult(player1.getScore(), player2.getScore());
+            } else {
+                return new OngoingResult(player1.getScore(), player2.getScore());
+            }
         }
+    }
+
+    private static boolean someoneIsAheadByOnePoint(Player player1, Player player2) {
+        return Math.abs(player1.getScore() - player2.getScore()) == 1;
+    }
+
+    private static boolean eitherPlayerHasAdvantage(int player1Score, int player2Score) {
+        return player1Score >= 4 || player2Score >= 4;
     }
 }
