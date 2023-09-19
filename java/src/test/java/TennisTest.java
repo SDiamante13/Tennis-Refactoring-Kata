@@ -1,103 +1,106 @@
-import static org.junit.Assert.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(Parameterized.class)
 public class TennisTest {
 
-    private int player1Score;
-    private int player2Score;
-    private String expectedScore;
+    public static Stream<Object[]> getAllScores() {
+        return Stream.of(new Object[][]{
+                {0, 0, "Love-All"},
+                {1, 1, "Fifteen-All"},
+                {2, 2, "Thirty-All"},
+                {3, 3, "Deuce"},
+                {4, 4, "Deuce"},
 
-    public TennisTest(int player1Score, int player2Score, String expectedScore) {
-        this.player1Score = player1Score;
-        this.player2Score = player2Score;
-        this.expectedScore = expectedScore;
-    }
-    
-    @Parameters(name = "{0}:{1} = {2}")
-    public static Collection<Object[]> getAllScores() {
-        return Arrays.asList(new Object[][] {
-                { 0, 0, "Love-All" },
-                { 1, 1, "Fifteen-All" },
-                { 2, 2, "Thirty-All"},
-                { 3, 3, "Deuce"},
-                { 4, 4, "Deuce"},
-                
-                { 1, 0, "Fifteen-Love"},
-                { 0, 1, "Love-Fifteen"},
-                { 2, 0, "Thirty-Love"},
-                { 0, 2, "Love-Thirty"},
-                { 3, 0, "Forty-Love"},
-                { 0, 3, "Love-Forty"},
-                { 4, 0, "Win for player1"},
-                { 0, 4, "Win for player2"},
-                
-                { 2, 1, "Thirty-Fifteen"},
-                { 1, 2, "Fifteen-Thirty"},
-                { 3, 1, "Forty-Fifteen"},
-                { 1, 3, "Fifteen-Forty"},
-                { 4, 1, "Win for player1"},
-                { 1, 4, "Win for player2"},
+                {1, 0, "Fifteen-Love"},
+                {0, 1, "Love-Fifteen"},
+                {2, 0, "Thirty-Love"},
+                {0, 2, "Love-Thirty"},
+                {3, 0, "Forty-Love"},
+                {0, 3, "Love-Forty"},
+                {4, 0, "Win for player1"},
+                {0, 4, "Win for player2"},
 
-                { 3, 2, "Forty-Thirty"},
-                { 2, 3, "Thirty-Forty"},
-                { 4, 2, "Win for player1"},
-                { 2, 4, "Win for player2"},
-                
-                { 4, 3, "Advantage player1"},
-                { 3, 4, "Advantage player2"},
-                { 5, 4, "Advantage player1"},
-                { 4, 5, "Advantage player2"},
-                { 15, 14, "Advantage player1"},
-                { 14, 15, "Advantage player2"},
+                {2, 1, "Thirty-Fifteen"},
+                {1, 2, "Fifteen-Thirty"},
+                {3, 1, "Forty-Fifteen"},
+                {1, 3, "Fifteen-Forty"},
+                {4, 1, "Win for player1"},
+                {1, 4, "Win for player2"},
 
-                { 6, 4, "Win for player1"},
-                { 4, 6, "Win for player2"},
-                { 16, 14, "Win for player1"},
-                { 14, 16, "Win for player2"},
+                {3, 2, "Forty-Thirty"},
+                {2, 3, "Thirty-Forty"},
+                {4, 2, "Win for player1"},
+                {2, 4, "Win for player2"},
+
+                {4, 3, "Advantage player1"},
+                {3, 4, "Advantage player2"},
+                {5, 4, "Advantage player1"},
+                {4, 5, "Advantage player2"},
+                {15, 14, "Advantage player1"},
+                {14, 15, "Advantage player2"},
+
+                {6, 4, "Win for player1"},
+                {4, 6, "Win for player2"},
+                {16, 14, "Win for player1"},
+                {14, 16, "Win for player2"},
         });
     }
 
-    public void checkAllScores(TennisGame game) {
-        int highestScore = Math.max(this.player1Score, this.player2Score);
+    private static void checkAllScores(int player1Points, int player2Points, String expectedScore, TennisGame game) {
+        int highestScore = Math.max(player1Points, player2Points);
         for (int i = 0; i < highestScore; i++) {
-            if (i < this.player1Score)
+            if (i < player1Points)
                 game.wonPoint("player1");
-            if (i < this.player2Score)
+            if (i < player2Points)
                 game.wonPoint("player2");
         }
-        assertEquals(this.expectedScore, game.getScore());
+        assertEquals(expectedScore, game.getScore());
     }
 
-    @Test
-    public void checkAllScoresTennisGame1() {
+    @ParameterizedTest
+    @MethodSource("getAllScores")
+    public void checkAllScoresTennisGame1(int player1Points, int player2Points, String expectedScore) {
         TennisGame1 game = new TennisGame1("player1", "player2");
-        checkAllScores(game);
+        checkAllScores(player1Points, player2Points, expectedScore, game);
     }
 
-    @Test
-    public void checkAllScoresTennisGame2() {
+    @ParameterizedTest
+    @MethodSource("getAllScores")
+    public void checkAllScoresTennisGame2(int player1Points, int player2Points, String expectedScore) {
         TennisGame2 game = new TennisGame2("player1", "player2");
-        checkAllScores(game);
+        checkAllScores(player1Points, player2Points, expectedScore, game);
     }
 
-    @Test
-    public void checkAllScoresTennisGame3() {
+    @ParameterizedTest
+    @MethodSource("getAllScores")
+    public void checkAllScoresTennisGame3(int player1Points, int player2Points, String expectedScore) {
         TennisGame3 game = new TennisGame3("player1", "player2");
-        checkAllScores(game);
+        checkAllScores(player1Points, player2Points, expectedScore, game);
     }
 
-    @Test
-    public void checkAllScoresTennisGame4() {
+    @ParameterizedTest
+    @MethodSource("getAllScores")
+    public void checkAllScoresTennisGame4(int player1Points, int player2Points, String expectedScore) {
         TennisGame game = new TennisGame4("player1", "player2");
-        checkAllScores(game);
+        checkAllScores(player1Points, player2Points, expectedScore, game);
     }
 
+    @ParameterizedTest
+    @MethodSource("getAllScores")
+    public void checkAllScoresTennisGame5(int player1Points, int player2Points, String expectedScore) {
+        TennisGame game = new TennisGame5("player1", "player2");
+        checkAllScores(player1Points, player2Points, expectedScore, game);
+    }
+
+
+    @ParameterizedTest
+    @MethodSource("getAllScores")
+    public void checkAllScoresTennisGame6(int player1Points, int player2Points, String expectedScore) {
+        TennisGame game = new TennisGame6("player1", "player2");
+        checkAllScores(player1Points, player2Points, expectedScore, game);
+    }
 }
